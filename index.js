@@ -1,6 +1,3 @@
-import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.module.js";
-import { OrbitControls } from "./src/third-party/OrbitControls.module.js";
-
 let camera, scene, renderer;
 let geometry, material, mesh;
 let controls;
@@ -48,7 +45,7 @@ function init() {
     scene.add(mesh);
 
     // orbit control
-    controls = new OrbitControls(camera, renderer.domElement);
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableZoom = true;
 
     setupEventListeners();
