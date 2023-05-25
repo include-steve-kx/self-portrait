@@ -1,28 +1,65 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.module.js';
+import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.module.js";
+import { OrbitControls } from "./src/third-party/OrbitControls.module.js";
 
-// Create a scene
-const scene = new THREE.Scene();
+let camera, scene, renderer;
+let geometry, material, mesh;
+let controls;
 
-// Create a camera
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
+function setupEventListeners() {
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
 
-// Create a renderer
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+        renderer.setSize( window.innerWidth, window.innerHeight );
+    })
+}
 
-// Create a cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+function init() {
+    // renderer
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    // let canvas_parent_div = document.querySelector('#canvas-container');
+    // canvas_parent_div.appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement);
 
-// Render the scene
+    // scene
+    scene = new THREE.Scene();
+
+    // camera
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    camera.position.set(2, 2, 2);
+    camera.lookAt(0, 0, 0);
+
+    // lighting
+    const light = new THREE.AmbientLight(0x404040, 10);
+    scene.add(light);
+    const light2 = new THREE.PointLight(0x404040, 100, 100);
+    light2.position.set(1, 2.5, 5);
+    scene.add(light2);
+
+    // mesh
+    geometry = new THREE.BoxGeometry(1, 1, 1);
+    material = new THREE.MeshStandardMaterial({
+        color: 0xff0000,
+    });
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    // orbit control
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = true;
+
+    setupEventListeners();
+}
+
 function animate() {
     requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+
     renderer.render(scene, camera);
+
 }
+
+init();
 animate();
